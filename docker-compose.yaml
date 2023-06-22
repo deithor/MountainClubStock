@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  php:
+    container_name: stock-php-nginx
+    image: webdevops/php-nginx-dev:8.0
+    volumes:
+      - ./:/app
+      - ~/.ssh:/home/application/.ssh
+    working_dir: /app
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+      WEB_DOCUMENT_INDEX: index.php
+      PHP_MAX_EXECUTION_TIME: 3600
+      PHP_DISPLAY_ERRORS: 1
+      COMPOSER_MEMORY_LIMIT: -1
+      DOMAIN_NAME: localhost
+      VIRTUAL_HOST: localhost
+      APPLICATION_UID: shell id -u
+      APPLICATION_GID: shell id -g
+      PHP_DEBUGGER: xdebug
+      XDEBUG_REMOTE_AUTOSTART: 1
+      COMPOSER_VERSION: 2
+    ports:
+      - "8089:80"
+    depends_on:
+      - mysql
+    networks:
+      - appnet
+
+  mysql:
+    container_name: stock-db
+    image: mysql:5.7
+    volumes:
+      - ./docker/mysql_data:/var/lib/mysql:delegated,rw
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3303:3306"
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: "bridge"
+
+volumes:
+  mysql_data:
+    driver: "local"
