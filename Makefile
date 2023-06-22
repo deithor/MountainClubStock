@@ -32,3 +32,6 @@ entity:
 
 cc:
 	docker-compose exec php bin/console cache:clear
+
+cs-fix:
+	docker-compose exec php vendor/bin/php-cs-fixer fix --allow-risky=yes
