@@ -3,7 +3,7 @@ version: '3'
 services:
   php:
     container_name: stock-php-nginx
-    image: webdevops/php-nginx-dev:8.0
+    image: webdevops/php-nginx-dev:8.2
     volumes:
       - ./:/app
       - ~/.ssh:/home/application/.ssh
