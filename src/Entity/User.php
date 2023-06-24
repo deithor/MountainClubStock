@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -33,6 +35,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
+
+    #[ORM\OneToMany(mappedBy: 'borrower', targetEntity: RentalRecord::class)]
+    private Collection $rentalRecords;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BasketItem::class)]
+    public function __construct()
+    {
+        $this->basket = new ArrayCollection();
+        $this->rentalRecord = new ArrayCollection();
+        $this->rentalRecords = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -112,6 +125,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BasketItem>
+     */
+    public function getBasket(): Collection
+    {
+        return $this->basket;
+    }
+
+    public function addBasketItem(BasketItem $basketItem): static
+    {
+        if (!$this->basket->contains($basketItem)) {
+            $this->basket->add($basketItem);
+            $basketItem->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBasketItem(BasketItem $basketItem): static
+    {
+        if ($this->basket->removeElement($basketItem)) {
+            // set the owning side to null (unless already changed)
+            if ($basketItem->getUser() === $this) {
+                $basketItem->setUser(null);
+            }
+        }
 
         return $this;
     }
