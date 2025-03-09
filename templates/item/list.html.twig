@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="content-search">
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" aria-label="Search" name="name"
+                           placeholder="Название">
+                    <input class="form-control mr-sm-2" type="search" aria-label="Search" name="category"
+                           placeholder="Категория">
+                    <button class="btn btn-default my-2 my-sm-0" type="submit">Найти</button>
+                </form>
+            </div>
+
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        {{ knp_pagination_sortable(pagination, 'Название', 'i.name') }}
+                    </th>
+                    <th{% if pagination.isSorted('c.name') %} class="sorted"{% endif %}>
+                        {{ knp_pagination_sortable(pagination, 'Категория', 'c.name') }}
+                    </th>
+                    <th{% if pagination.isSorted('i.quantity') %} class="sorted"{% endif %}>
+                        {{ knp_pagination_sortable(pagination, 'Количество', 'i.quantity') }}
+                    </th>
+                    <th{% if pagination.isSorted('i.price') %} class="sorted"{% endif %}>
+                        {{ knp_pagination_sortable(pagination, 'Стоимость', 'i.price') }}
+                    </th>
+                    <th colspan="2">Действия</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for item in pagination %}
+                    <tr {% if loop.index is odd %}class="color"{% endif %}>
+                        <td class="col-md-2">{{ item.name }}</td>
+                        <td class="col-md-1">{{ item.category.name }}</td>
+                        <td class="col-md-1">{{ item.quantity }}</td>
+                        <td class="col-md-1">{{ item.price }}</td>
+                        <td class="col-md-2">
+                            <form action="{{ path('create_basket_item', {'id': item.id}) }}" method="post">
+                                <button class="btn btn-default my-2 my-sm-0" type="submit">Добавить в корзину</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+            <div class="count">
+                Найдено предметов: {{ pagination.getTotalItemCount }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

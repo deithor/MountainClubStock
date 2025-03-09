@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BasketItem;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,5 +41,15 @@ class BasketItemRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getQueryForList(User $user, ?array $params = []): Query
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('b')
+            ->andWhere('b.user = :user')
+            ->setParameter('user', $user);
+
+        return $qb->getQuery();
     }
 }

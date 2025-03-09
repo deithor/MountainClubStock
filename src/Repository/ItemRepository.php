@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Item;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,5 +40,20 @@ class ItemRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getQueryForList(?array $params = []): Query
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('i', 'c')
+            ->leftJoin('i.category', 'c');
+
+        foreach ($params as $param => $value) {
+            $qb
+                ->andWhere("i.{$param} LIKE :{$param}")
+                ->setParameter($param, "%{$value}%");
+        }
+
+        return $qb->getQuery();
     }
 }
