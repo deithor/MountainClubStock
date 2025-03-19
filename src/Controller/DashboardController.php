@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 #[AdminDashboard(
     routePath: '/',
-    routeName: '',
+    routeName: 'dashboard',
 )]
 class DashboardController extends AbstractDashboardController
 {

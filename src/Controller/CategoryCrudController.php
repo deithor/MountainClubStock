@@ -33,7 +33,7 @@ class CategoryCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
-            TextField::new('name'),
+            TextField::new('name', 'Название'),
         ];
     }
 }

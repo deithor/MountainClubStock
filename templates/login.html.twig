@@ -1,0 +1,18 @@
+{% extends '@EasyAdmin/page/login.html.twig' %}
+
+{% block login_form_wrapper %}
+    <div class="form-group">
+        {{ parent() }}
+    </div>
+
+    {% block register %}
+        <div class="form-group">
+            <div class="form-text">
+                Нет аккаунта?
+                <div class="form-text">
+                    <a href="{{ path('app_register') }}">Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock login_form_wrapper %}
