@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\BasketItem;
 use App\Entity\Category;
 use App\Entity\Item;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -36,8 +38,10 @@ class DashboardController extends AbstractDashboardController
     {
         return [
             MenuItem::linkToDashboard('Главная страница', 'fa fa-home'),
-            MenuItem::linkToCrud('Категории', 'fa fa-tags', Category::class),
-            MenuItem::linkToCrud('Предметы', 'fa fa-tags', Item::class),
+            MenuItem::linkToCrud('Категории', 'fa fa-table-list', Category::class),
+            MenuItem::linkToCrud('Предметы', 'fa fa-tent', Item::class),
+            MenuItem::linkToCrud('Пользователи', 'fa fa-users', User::class),
+            MenuItem::linkToCrud('Корзина', 'fa fa-cart-shopping', BasketItem::class),
         ];
     }
 }

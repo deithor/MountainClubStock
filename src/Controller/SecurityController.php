@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/login', name: 'app_login')]
+    #[Route('/login', name: 'app-login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -33,10 +33,10 @@ class SecurityController extends AbstractController
             'sign_in_label' => 'Войти',
 
             // todo add reset password form
-//            'forgot_password_enabled' => true,
-//             the path (i.e. a relative or absolute URL) to visit when clicking the "forgot password?" link (default: '#')
-//            'forgot_password_path' => $this->generateUrl('...', ['...' => '...']),
-//            'forgot_password_label' => 'Забыли пароль?',
+            //            'forgot_password_enabled' => true,
+            //             the path (i.e. a relative or absolute URL) to visit when clicking the "forgot password?" link (default: '#')
+            //            'forgot_password_path' => $this->generateUrl('...', ['...' => '...']),
+            //            'forgot_password_label' => 'Забыли пароль?',
 
             'remember_me_enabled' => true,
             'remember_me_checked' => true,

@@ -8,11 +8,14 @@ use App\Entity\BasketItem;
 use App\Entity\Item;
 use App\Entity\User;
 use App\Repository\BasketItemRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class BasketItemService
 {
-    public function __construct(private BasketItemRepository $basketItemRepository)
-    {
+    public function __construct(
+        private BasketItemRepository $basketItemRepository,
+        private EntityManagerInterface $entityManager
+    ) {
     }
 
     public function createBasketItem(User $user, Item $item, int $quantity): void
@@ -29,6 +32,7 @@ readonly class BasketItemService
                 ->setQuantity($quantity);
         }
 
-        $this->basketItemRepository->save($basketItem, true);
+        $this->entityManager->persist($basketItem);
+        $this->entityManager->flush();
     }
 }
