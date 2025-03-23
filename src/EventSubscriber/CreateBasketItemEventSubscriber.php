@@ -27,8 +27,11 @@ readonly class CreateBasketItemEventSubscriber implements EventSubscriberInterfa
 
     public function removeOldBasketItem(BeforeEntityPersistedEvent $event): void
     {
-        /** @var BasketItem $basketItem */
         $basketItem = $event->getEntityInstance();
+
+        if (!($basketItem instanceof BasketItem)) {
+            return;
+        }
 
         $oldBasketItem = $this->basketItemRepository->findOneBy(['user' => $basketItem->getUser(), 'item' => $basketItem->getItem()]);
 
