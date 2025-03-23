@@ -34,6 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 180)]
+    //todo make unique?
     private ?string $email = null;
 
     #[ORM\OneToMany(mappedBy: 'borrower', targetEntity: RentalRecord::class)]

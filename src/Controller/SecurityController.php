@@ -32,9 +32,9 @@ class SecurityController extends AbstractController
             'password_label' => 'Пароль',
             'sign_in_label' => 'Войти',
 
-            'forgot_password_enabled' => true,
             // todo add reset password form
-            // the path (i.e. a relative or absolute URL) to visit when clicking the "forgot password?" link (default: '#')
+//            'forgot_password_enabled' => true,
+//             the path (i.e. a relative or absolute URL) to visit when clicking the "forgot password?" link (default: '#')
 //            'forgot_password_path' => $this->generateUrl('...', ['...' => '...']),
 //            'forgot_password_label' => 'Забыли пароль?',
 
