@@ -18,6 +18,7 @@ readonly class CreateBasketItemEventSubscriber implements EventSubscriberInterfa
     ) {
     }
 
+    // todo: check update action
     public static function getSubscribedEvents(): array
     {
         return [

@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\BasketItem;
 use App\Entity\Category;
 use App\Entity\Item;
+use App\Entity\RentalRecord;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -42,6 +43,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Предметы', 'fa fa-tent', Item::class),
             MenuItem::linkToCrud('Пользователи', 'fa fa-users', User::class),
             MenuItem::linkToCrud('Корзина', 'fa fa-cart-shopping', BasketItem::class),
+            MenuItem::linkToCrud('История выдачи', 'fa fa-book', RentalRecord::class),
         ];
     }
 }
