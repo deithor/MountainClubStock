@@ -23,46 +23,14 @@ class RentalRecordRepository extends ServiceEntityRepository
         parent::__construct($registry, RentalRecord::class);
     }
 
-    public function save(RentalRecord $entity, bool $flush = false): void
+    public function getItemAvailableQuantity(int $itemId)
     {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->createQueryBuilder('rr')
+            ->select('(COALESCE(i.quantity,0)) - COALESCE(SUM(rr.quantity),0)')
+            ->leftJoin('rr.item', 'i')
+            ->andWhere('i.id = :id')
+            ->setParameter('id', $itemId)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
-
-    public function remove(RentalRecord $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-//    /**
-//     * @return RentalRecord[] Returns an array of RentalRecord objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?RentalRecord
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

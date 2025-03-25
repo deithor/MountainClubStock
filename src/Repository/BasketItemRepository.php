@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BasketItem;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,5 +22,16 @@ class BasketItemRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BasketItem::class);
+    }
+
+    public function getBasketItemsByUser(User $user): array
+    {
+        $queryBuilder = $this->createQueryBuilder('bi')
+            ->select('bi', 'i')
+            ->leftJoin('bi.item', 'i')
+            ->andWhere('bi.user = :user')
+            ->setParameter('user', $user);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

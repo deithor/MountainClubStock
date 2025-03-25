@@ -45,6 +45,7 @@ class BasketItemCrudController extends AbstractCrudController
         ];
     }
 
+    // todo: add validation quantity <= item quantity
     public function createEntity(string $entityFqcn): BasketItem
     {
         $basketItem = new BasketItem();
