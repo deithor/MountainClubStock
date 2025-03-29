@@ -31,12 +31,14 @@ class DashboardController extends AbstractDashboardController
 
     public function configureDashboard(): Dashboard
     {
+        // todo add personal account tab
         return Dashboard::new()
             ->setTitle('Учёт снаряжения');
     }
 
     public function configureMenuItems(): iterable
     {
+        // todo update main page
         return [
             MenuItem::linkToDashboard('Главная страница', 'fa fa-home'),
             MenuItem::linkToCrud('Категории', 'fa fa-table-list', Category::class),
