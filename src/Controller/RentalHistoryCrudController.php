@@ -22,6 +22,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 
 // todo: change default actions
+// show returned items
+// disable delete
 #[AdminCrud(routePath: '/rental-history', routeName: 'rental-history')]
 class RentalHistoryCrudController extends AbstractCrudController
 {
