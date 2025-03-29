@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Item;
+use App\Enum\UserRole;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -18,6 +19,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 #[AdminCrud(routePath: '/items', routeName: 'items')]
 class ItemCrudController extends AbstractCrudController
 {
+    private const ACTION_ADD_TO_BASKET = 'addToBasket';
+
     public static function getEntityFqcn(): string
     {
         return Item::class;
@@ -50,10 +53,15 @@ class ItemCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->add(
-                Crud::PAGE_INDEX,
-                Action::new('giveItemsToUser', 'Добавить в корзину')
-                    ->linkToCrudAction('giveItemsToUser')
-            );
+//            ->add(
+//                Crud::PAGE_INDEX,
+//                Action::new(self::ACTION_ADD_TO_BASKET, 'Добавить в корзину')
+//                    ->linkToCrudAction('addToBasket')
+//            )
+//            ->setPermission(self::ACTION_ADD_TO_BASKET, UserRole::STOREKEEPER)
+            ->setPermission(Action::NEW, UserRole::STOREKEEPER)
+            ->setPermission(Action::DELETE, UserRole::STOREKEEPER)
+            ->setPermission(Action::EDIT, UserRole::STOREKEEPER)
+            ->setPermission(Action::BATCH_DELETE, UserRole::STOREKEEPER);
     }
 }

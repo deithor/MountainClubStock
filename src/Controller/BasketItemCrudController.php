@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\BasketItem;
+use App\Enum\UserRole;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -17,8 +18,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+// todo global button to give all items to user
 #[AdminCrud(routePath: '/basket-items', routeName: 'basket-items')]
+#[IsGranted(UserRole::STOREKEEPER)]
 class BasketItemCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

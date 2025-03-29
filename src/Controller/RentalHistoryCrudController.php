@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\RentalRecord;
+use App\Enum\UserRole;
 use DateTimeImmutable;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
@@ -24,6 +25,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 // todo: change default actions
 // show returned items
 // disable delete
+// restrict access to whole history for role user
 #[AdminCrud(routePath: '/rental-history', routeName: 'rental-history')]
 class RentalHistoryCrudController extends AbstractCrudController
 {
@@ -59,13 +61,6 @@ class RentalHistoryCrudController extends AbstractCrudController
         ];
     }
 
-    public function configureActions(Actions $actions): Actions
-    {
-        return $actions
-            ->remove(Crud::PAGE_INDEX, Action::EDIT)
-            ->remove(Crud::PAGE_DETAIL, Action::EDIT);
-    }
-
     public function createEntity(string $entityFqcn): RentalRecord
     {
         $rentalRecord = new RentalRecord();
@@ -84,5 +79,12 @@ class RentalHistoryCrudController extends AbstractCrudController
         $response->where('entity.returnedAt IS NULL');
 
         return $response;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->disable(Action::EDIT, Action::DELETE)
+            ->setPermission(Action::NEW, UserRole::STOREKEEPER);
     }
 }

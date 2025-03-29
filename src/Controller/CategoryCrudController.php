@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Enum\UserRole;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -35,5 +38,14 @@ class CategoryCrudController extends AbstractCrudController
                 ->onlyOnIndex(),
             TextField::new('name', 'Название'),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->setPermission(Action::NEW, UserRole::STOREKEEPER)
+            ->setPermission(Action::DELETE, UserRole::STOREKEEPER)
+            ->setPermission(Action::EDIT, UserRole::STOREKEEPER)
+            ->setPermission(Action::BATCH_DELETE, UserRole::STOREKEEPER);
     }
 }
