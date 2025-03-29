@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\RentalRecord;
+use DateTimeImmutable;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -66,7 +67,9 @@ class RentalHistoryCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn): RentalRecord
     {
         $rentalRecord = new RentalRecord();
-        $rentalRecord->setLender($this->getUser());
+        $rentalRecord
+            ->setLender($this->getUser())
+            ->setBorrowedAt(new DateTimeImmutable());
 
         return $rentalRecord;
     }
