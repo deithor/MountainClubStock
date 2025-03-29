@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BasketItemRepository;
+use App\Validator\ItemQuantityIsAvailableToGive;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BasketItemRepository::class)]
+#[ItemQuantityIsAvailableToGive]
 class BasketItem
 {
     #[ORM\Id]

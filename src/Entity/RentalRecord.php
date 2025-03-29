@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\RentalRecordRepository;
+use App\Validator\ItemQuantityIsAvailableToGive;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RentalRecordRepository::class)]
+#[ItemQuantityIsAvailableToGive]
 class RentalRecord
 {
     #[ORM\Id]

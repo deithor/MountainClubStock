@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Item;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -43,5 +45,15 @@ class ItemCrudController extends AbstractCrudController
             IntegerField::new('price', 'Стоимость')
                 ->onlyOnForms(),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(
+                Crud::PAGE_INDEX,
+                Action::new('giveItemsToUser', 'Добавить в корзину')
+                    ->linkToCrudAction('giveItemsToUser')
+            );
     }
 }
