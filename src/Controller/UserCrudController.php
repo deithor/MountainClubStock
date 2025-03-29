@@ -75,8 +75,7 @@ class UserCrudController extends AbstractCrudController
             ->setPermission(self::ACTION_GIVE_BASKET_ITEMS, UserRole::STOREKEEPER)
             ->setPermission(Action::NEW, UserRole::ADMIN)
             ->setPermission(Action::DELETE, UserRole::ADMIN)
-//            ->setPermission(Action::EDIT, UserRole::ADMIN)
-        ;
+            ->setPermission(Action::EDIT, UserRole::ADMIN);
     }
 
     public function giveItemsToUser(AdminContext $context): RedirectResponse
