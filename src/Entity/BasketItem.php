@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\BasketItemRepository;
 use App\Validator\ItemQuantityIsAvailableToGive;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BasketItemRepository::class)]
 #[ItemQuantityIsAvailableToGive]
@@ -19,13 +20,16 @@ class BasketItem
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Item $item = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
     private int $quantity = 1;
 
     #[ORM\ManyToOne(inversedBy: 'basket')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $user = null;
 
     public function getId(): ?int

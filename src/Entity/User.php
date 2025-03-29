@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
@@ -23,6 +24,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 180)]
     private ?string $username = null;
 
     #[ORM\Column]
@@ -36,12 +39,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     //todo make unique?
+    #[Assert\NotBlank]
+    #[Assert\Unique]
     private ?string $email = null;
 
     #[ORM\OneToMany(mappedBy: 'borrower', targetEntity: RentalRecord::class)]
     private Collection $rentalRecords;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: BasketItem::class)]
+    private Collection $basket;
+
     public function __construct()
     {
         $this->basket = new ArrayCollection();

@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\RentalRecordRepository;
 use App\Validator\ItemQuantityIsAvailableToGive;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RentalRecordRepository::class)]
 #[ItemQuantityIsAvailableToGive]
@@ -19,26 +20,32 @@ class RentalRecord
 
     #[ORM\ManyToOne(inversedBy: 'rentalRecords')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Item $item = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $lender = null;
 
     #[ORM\ManyToOne()]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $borrower = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
     private int $quantity = 1;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?\DateTimeImmutable $borrowedAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $returnedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $comment = null;
 
     public function getId(): ?int

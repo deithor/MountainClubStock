@@ -8,6 +8,7 @@ use App\Repository\ItemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item
@@ -18,15 +19,22 @@ class Item
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\PositiveOrZero]
     private ?int $quantity = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\PositiveOrZero]
     private ?int $price = null;
 
     #[ORM\Column(length: 511, nullable: true)]
+    #[Assert\Length(max: 511)]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'item', targetEntity: RentalRecord::class)]
@@ -34,6 +42,7 @@ class Item
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Category $category = null;
 
     public function __construct()

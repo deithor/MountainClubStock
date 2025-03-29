@@ -36,7 +36,12 @@ class CategoryCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
-            TextField::new('name', 'Название'),
+            TextField::new('name', 'Название')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'maxlength' => 40,
+                    ],
+                ]),
         ];
     }
 

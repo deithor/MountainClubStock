@@ -41,11 +41,31 @@ class ItemCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
-            TextField::new('name', 'Название'),
-            TextField::new('description', 'Описание'),
+            TextField::new('name', 'Название')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'maxlength' => 255,
+                    ],
+                ]),
+            TextField::new('description', 'Описание')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'maxlength' => 511,
+                    ],
+                ]),
             AssociationField::new('category', 'Категория'),
-            IntegerField::new('quantity', 'Количество'),
+            IntegerField::new('quantity', 'Количество')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'min' => 0,
+                    ],
+                ]),
             IntegerField::new('price', 'Стоимость')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'min' => 0,
+                    ],
+                ])
                 ->onlyOnForms(),
         ];
     }

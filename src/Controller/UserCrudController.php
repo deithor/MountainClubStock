@@ -51,7 +51,12 @@ class UserCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
-            TextField::new('email', 'Почта'),
+            TextField::new('email', 'Почта')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'maxlength' => 180,
+                    ],
+                ]),
             ChoiceField::new('roles', 'Роли')
                 ->setChoices([
                     'Обычный пользователь' => UserRole::USER,
