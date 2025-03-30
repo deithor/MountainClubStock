@@ -28,7 +28,7 @@ class RentalRecord
     #[Assert\NotNull]
     private ?User $lender = null;
 
-    #[ORM\ManyToOne()]
+    #[ORM\ManyToOne(inversedBy: 'rentalRecords')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
     private ?User $borrower = null;

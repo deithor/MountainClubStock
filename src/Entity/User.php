@@ -56,7 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->basket = new ArrayCollection();
-        $this->rentalRecord = new ArrayCollection();
         $this->rentalRecords = new ArrayCollection();
     }
 
@@ -165,6 +164,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($basketItem->getUser() === $this) {
                 $basketItem->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RentalRecord>
+     */
+    public function getRentalRecords(): Collection
+    {
+        return $this->rentalRecords;
+    }
+
+    public function addRentalRecord(RentalRecord $rentalRecord): static
+    {
+        if (!$this->basket->contains($rentalRecord)) {
+            $this->basket->add($rentalRecord);
+            $rentalRecord->setBorrower($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRentalRecord(RentalRecord $rentalRecord): static
+    {
+        if ($this->rentalRecords->removeElement($rentalRecord)) {
+            // set the owning side to null (unless already changed)
+            if ($rentalRecord->getBorrower() === $this) {
+                $rentalRecord->setBorrower(null);
             }
         }
 
