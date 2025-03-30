@@ -53,7 +53,14 @@ readonly class BasketItemService
         $borrower = $this->userRepository->findOneBy(['id' => $borrowerId]);
 
         // todo: add comment to rental record from UI
+        /** @var BasketItem $basketItem */
         foreach ($basketItems as $basketItem) {
+            if ($basketItem->getItem()->getDeletedAt()) {
+                throw new BadRequestHttpException(
+                    "Нельзя выдать удалённый предмет: {$basketItem->getItem()}"
+                );
+            }
+
             $availableQuantity = $this->rentalRecordRepository->getItemAvailableQuantity($basketItem->getItem()->getId());
 
             if ($availableQuantity < $basketItem->getQuantity()) {
