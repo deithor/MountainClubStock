@@ -47,6 +47,7 @@ class RentalHistoryCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
+            // todo disable deleted items
             AssociationField::new('item', 'Предмет'),
             AssociationField::new('borrower', 'У кого'),
             IntegerField::new('quantity', 'Количество')
