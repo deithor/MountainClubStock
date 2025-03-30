@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ItemRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: false)]
 class Item
 {
     #[ORM\Id]
@@ -44,6 +47,9 @@ class Item
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
     private ?Category $category = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $deletedAt = null;
 
     public function __construct()
     {
@@ -148,5 +154,15 @@ class Item
         $this->category = $category;
 
         return $this;
+    }
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?DateTimeImmutable $deletedAt): void
+    {
+        $this->deletedAt = $deletedAt;
     }
 }

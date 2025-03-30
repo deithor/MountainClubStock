@@ -8,7 +8,10 @@ use App\Entity\User;
 use App\Enum\UserRole;
 use App\Service\BasketItemService;
 use Closure;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,7 +19,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -84,7 +89,22 @@ class UserCrudController extends AbstractCrudController
             TextField::new('password', 'Пароль')
                 ->setFormType(PasswordType::class)
                 ->onlyWhenCreating(),
+            DateTimeField::new('deletedAt', 'Удалено')
+                ->formatValue(function ($value) {
+                    return $value ? $value->format('Y-m-d h:m:s') : 'Нет';
+                })
+                ->onlyOnDetail(),
         ];
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $queryBuilder
+            ->andWhere('entity.deletedAt IS NULL');
+
+        return $queryBuilder;
     }
 
     public function configureActions(Actions $actions): Actions

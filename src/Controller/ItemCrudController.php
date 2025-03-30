@@ -6,12 +6,18 @@ namespace App\Controller;
 
 use App\Entity\Item;
 use App\Enum\UserRole;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -30,7 +36,6 @@ class ItemCrudController extends AbstractCrudController
     {
         return $crud
             ->setPaginatorPageSize(30)
-//            ->setEntityPermission('ROLE_EDITOR')
             ->setSearchFields(['name', 'category.name'])
             ->setEntityLabelInSingular('Предмет')
             ->setEntityLabelInPlural('Предметы');
@@ -67,6 +72,11 @@ class ItemCrudController extends AbstractCrudController
                     ],
                 ])
                 ->onlyOnForms(),
+            DateTimeField::new('deletedAt', 'Удалено')
+                ->formatValue(function ($value) {
+                    return $value ? $value->format('Y-m-d h:m:s') : 'Нет';
+                })
+                ->onlyOnDetail(),
         ];
     }
 
@@ -83,5 +93,15 @@ class ItemCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, UserRole::STOREKEEPER)
             ->setPermission(Action::EDIT, UserRole::STOREKEEPER)
             ->setPermission(Action::BATCH_DELETE, UserRole::STOREKEEPER);
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $queryBuilder
+            ->andWhere('entity.deletedAt IS NULL');
+
+        return $queryBuilder;
     }
 }

@@ -14,7 +14,7 @@ final class Version20230624141906 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add tables for basket and rental history';
     }
 
     public function up(Schema $schema): void
