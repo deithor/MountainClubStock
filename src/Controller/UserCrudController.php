@@ -7,19 +7,27 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Service\BasketItemService;
+use Closure;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AdminCrud(routePath: '/users', routeName: 'users')]
 class UserCrudController extends AbstractCrudController
@@ -29,6 +37,7 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly BasketItemService $basketItemService,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        public readonly UserPasswordHasherInterface $userPasswordHasher,
     ) {
     }
 
@@ -51,7 +60,14 @@ class UserCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
+            TextField::new('username', 'Логин')
+                ->setFormTypeOptions([
+                    'attr' => [
+                        'maxlength' => 180,
+                    ],
+                ]),
             TextField::new('email', 'Почта')
+                ->setFormType(EmailType::class)
                 ->setFormTypeOptions([
                     'attr' => [
                         'maxlength' => 180,
@@ -65,6 +81,9 @@ class UserCrudController extends AbstractCrudController
                     'Администратор' => UserRole::ADMIN,
                 ])
                 ->allowMultipleChoices(),
+            TextField::new('password', 'Пароль')
+                ->setFormType(PasswordType::class)
+                ->onlyWhenCreating(),
         ];
     }
 
@@ -119,5 +138,37 @@ class UserCrudController extends AbstractCrudController
             ->generateUrl();
 
         return $this->redirect($url);
+    }
+
+    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createNewFormBuilder($entityDto, $formOptions, $context);
+
+        return $this->addPasswordEventListener($formBuilder);
+    }
+
+    private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface
+    {
+        return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, $this->hashPassword());
+    }
+
+    private function hashPassword(): Closure
+    {
+        return function ($event): void {
+            $form = $event->getForm();
+
+            if (!$form->isValid()) {
+                return;
+            }
+
+            $password = $form->get('password')->getData();
+
+            if ($password === null) {
+                return;
+            }
+
+            $hash = $this->userPasswordHasher->hashPassword($this->getUser(), $password);
+            $form->getData()->setPassword($hash);
+        };
     }
 }
