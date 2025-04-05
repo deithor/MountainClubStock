@@ -34,11 +34,13 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Аккаунт создан');
+
             return $this->redirectToRoute('dashboard');
         }
 
         return $this->render('registration.html.twig', [
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 }
