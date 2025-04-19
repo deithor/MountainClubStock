@@ -7,10 +7,12 @@ namespace App\Entity;
 use App\Repository\BasketItemRepository;
 use App\Validator\ItemQuantityIsAvailableToGive;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BasketItemRepository::class)]
 #[ItemQuantityIsAvailableToGive]
+#[UniqueEntity(['user', 'item'], 'В корзине уже есть этот предмет')]
 class BasketItem
 {
     #[ORM\Id]

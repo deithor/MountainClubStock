@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\BasketItem;
 use App\Enum\UserRole;
+use App\Service\BasketItemService;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -24,6 +25,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(UserRole::STOREKEEPER)]
 class BasketItemCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly BasketItemService $basketItemService,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return BasketItem::class;
@@ -53,7 +59,6 @@ class BasketItemCrudController extends AbstractCrudController
         ];
     }
 
-    // todo: add validation quantity <= item quantity
     public function createEntity(string $entityFqcn): BasketItem
     {
         $basketItem = new BasketItem();

@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraint;
 #[Attribute]
 class ItemQuantityIsAvailableToGive extends Constraint
 {
-    public string $message = 'Недостаточное количество предмета "{{ item }}", доступно {{ available }} из {{ requested }}';
+    public string $message = 'Недостаточное количество предмета "{{ item }}", доступно {{ available }}';
 
     public function getTargets(): string
     {

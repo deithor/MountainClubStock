@@ -9,12 +9,14 @@ use App\Entity\Item;
 use App\Entity\RentalRecord;
 use App\Entity\User;
 use App\Repository\BasketItemRepository;
+use App\Repository\ItemRepository;
 use App\Repository\RentalRecordRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 readonly class BasketItemService
 {
@@ -24,11 +26,12 @@ readonly class BasketItemService
         private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
         private Security $security,
+        private ItemRepository $itemRepository,
+        private ValidatorInterface $validator,
     ) {
     }
 
-    // todo: remove if it will be not needed
-    public function createBasketItem(User $user, Item $item, int $quantity): void
+    public function createBasketItem(User $user, Item $item, int $quantity, bool $flush = false): void
     {
         $basketItem = $this->basketItemRepository->findOneBy(['user' => $user, 'item' => $item]);
 
@@ -42,8 +45,23 @@ readonly class BasketItemService
                 ->setQuantity($quantity);
         }
 
+        $errors = $this->validator->validate($basketItem);
+
+        if ($errors->count()) {
+            $message = '';
+
+            foreach ($errors as $error) {
+                $message .= $error->getMessage() . PHP_EOL;
+            }
+
+            throw new BadRequestHttpException($message);
+        }
+
         $this->entityManager->persist($basketItem);
-        $this->entityManager->flush();
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     public function giveItemsToUser(int $borrowerId): void
@@ -87,5 +105,16 @@ readonly class BasketItemService
 
         $this->entityManager->persist($rentalRecord);
         $this->entityManager->remove($basketItem);
+    }
+
+    public function createBasketItemsByItemsIds(User $user, array $itemsIds): void
+    {
+        $items = $this->itemRepository->findBy(['id' => $itemsIds]);
+
+        foreach ($items as $item) {
+            $this->createBasketItem($user, $item, 1);
+        }
+
+        $this->entityManager->flush();
     }
 }

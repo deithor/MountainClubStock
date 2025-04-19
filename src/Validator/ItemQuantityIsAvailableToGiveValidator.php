@@ -34,9 +34,8 @@ class ItemQuantityIsAvailableToGiveValidator extends ConstraintValidator
 
         if ($availableQuantity < $value->getQuantity()) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ item }}', $value->getItem())
+                ->setParameter('{{ item }}', $value->getItem()->getName())
                 ->setParameter('{{ available }}', $availableQuantity)
-                ->setParameter('{{ requested }}', $value->getQuantity())
                 ->addViolation();
         }
     }
