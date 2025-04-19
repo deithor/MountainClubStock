@@ -39,6 +39,8 @@ class UserCrudController extends AbstractCrudController
 {
     private const ACTION_GIVE_BASKET_ITEMS = 'giveItemsToUser';
 
+    private const ACTION_SHOW_RENTAL_HISTORY = 'showRentalHistoryAction';
+
     public function __construct(
         private readonly BasketItemService $basketItemService,
         private readonly AdminUrlGenerator $adminUrlGenerator,
@@ -109,6 +111,9 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $showRentalHistory = Action::new(self::ACTION_SHOW_RENTAL_HISTORY, 'Посмотреть снаряжение на руках')
+            ->linkToCrudAction('showRentalHistoryAction');
+
         return $actions
             ->disable(Action::BATCH_DELETE)
             ->add(
@@ -116,6 +121,8 @@ class UserCrudController extends AbstractCrudController
                 Action::new(self::ACTION_GIVE_BASKET_ITEMS, 'Выдать снаряжение из корзины')
                     ->linkToCrudAction('giveItemsToUser')
             )
+            ->add(Crud::PAGE_INDEX, $showRentalHistory)
+            ->add(Crud::PAGE_DETAIL, $showRentalHistory)
             ->setPermission(self::ACTION_GIVE_BASKET_ITEMS, UserRole::STOREKEEPER)
             ->setPermission(Action::NEW, UserRole::ADMIN)
             ->setPermission(Action::DELETE, UserRole::ADMIN)
@@ -190,5 +197,17 @@ class UserCrudController extends AbstractCrudController
             $hash = $this->userPasswordHasher->hashPassword($this->getUser(), $password);
             $form->getData()->setPassword($hash);
         };
+    }
+
+    public function showRentalHistoryAction(AdminContext $context): RedirectResponse
+    {
+        $url = $this->adminUrlGenerator
+            ->setController(RentalHistoryCrudController::class)
+            ->setAction(Action::INDEX)
+            ->set('filters[borrower][value]', $context->getRequest()->get('entityId'))
+            ->set('filters[borrower][comparison]', '=')
+            ->generateUrl();
+
+        return $this->redirect($url);
     }
 }
