@@ -30,12 +30,15 @@ class ItemQuantityIsAvailableToGiveValidator extends ConstraintValidator
             throw new UnexpectedValueException($value);
         }
 
-        $availableQuantity = $this->rentalRecordRepository->getItemAvailableQuantity($value->getItem()->getId());
+        $availableQuantity = $this->rentalRecordRepository->getItemAvailableQuantity(
+            $value->getItem()->getId(),
+            $value->getId()
+        );
 
         if ($availableQuantity < $value->getQuantity()) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ item }}', $value->getItem()->getName())
-                ->setParameter('{{ available }}', $availableQuantity)
+                ->setParameter('{{ available }}', (string)$availableQuantity)
                 ->addViolation();
         }
     }
